@@ -1,4 +1,4 @@
-package cz.uhk.pgrf1.c03.madr.uloha2.model;
+package cz.uhk.pgrf1.c03.madr.uloha3.model;
 
 /**
  * trida pro uchovavani informaci o primce

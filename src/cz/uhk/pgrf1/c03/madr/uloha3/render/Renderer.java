@@ -1,4 +1,4 @@
-package cz.uhk.pgrf1.c03.madr.uloha2.render;
+package cz.uhk.pgrf1.c03.madr.uloha3.render;
 
 import java.awt.image.BufferedImage;
 /**

@@ -1,8 +1,8 @@
-package cz.uhk.pgrf1.c03.madr.uloha2.render;
+package cz.uhk.pgrf1.c03.madr.uloha3.render;
 
 import java.awt.image.BufferedImage;
-import cz.uhk.pgrf1.c03.madr.uloha2.model.Line;
-import cz.uhk.pgrf1.c03.madr.uloha2.model.Point;
+import cz.uhk.pgrf1.c03.madr.uloha3.model.Line;
+import cz.uhk.pgrf1.c03.madr.uloha3.model.Point;
 
 /**
  * trida pro vykreslovani primky
