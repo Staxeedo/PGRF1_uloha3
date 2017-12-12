@@ -15,7 +15,6 @@ import javax.swing.WindowConstants;
 
 /**
  * trida pro kresleni na platno: zobrazeni pixelu, ovladani mysi
- * 
  * @author PGRF FIM UHK
  * @version 2017
  */
