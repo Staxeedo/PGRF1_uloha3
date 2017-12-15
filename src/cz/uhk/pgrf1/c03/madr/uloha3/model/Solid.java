@@ -15,11 +15,6 @@ public abstract class Solid {
 	protected final List<Part> parts = new ArrayList<>();
 
 	public class Part {
-		// musi vedet jestli je ze dvou nebo tri bodu, domaci ukol dodelat krychli a
-		// ctyrsten
-		// udelat objekt Axis
-		// pravidelny ctyrsten TertraHeader
-		// udelat konkretni souradnice
 
 		private Topology type;
 		private int start;
@@ -48,7 +43,6 @@ public abstract class Solid {
 
 	}
 
-	// jak k tomu idex bufferu musime pristupovat, kde neco zacina...
 
 	public List<Vertex> getVertexBuffer() {
 		return vertexBuffer;
