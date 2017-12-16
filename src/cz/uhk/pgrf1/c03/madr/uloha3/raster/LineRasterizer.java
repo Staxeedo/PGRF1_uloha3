@@ -1,5 +1,6 @@
 package cz.uhk.pgrf1.c03.madr.uloha3.raster;
 
+import java.awt.Color;
 import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
@@ -11,8 +12,9 @@ public class LineRasterizer extends Rasterizer {
 
 	}
 
-	public void draw(Vec3D a, Vec3D b) {
+	public void draw(Vec3D a, Vec3D b, Color color) {
 		Graphics g = img.getGraphics();
+		g.setColor(color);
 		int x1 = (int) a.getX();
 		int x2 = (int) b.getX();
 		int y1 = (int) a.getY();

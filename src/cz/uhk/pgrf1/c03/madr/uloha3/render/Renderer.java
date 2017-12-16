@@ -1,5 +1,6 @@
 package cz.uhk.pgrf1.c03.madr.uloha3.render;
 
+import java.awt.Color;
 import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ public class Renderer{
 	private LineRasterizer lren;
 	double halfOfWidth;
 	double halfOfHeigh;
+	Color color;
 
 
 
@@ -28,6 +30,7 @@ public class Renderer{
 		lren = lineRasterizer;
 		halfOfHeigh = img.getHeight()/2;
 		halfOfWidth= img.getWidth()/2;
+		
 
 	}
 
@@ -61,6 +64,7 @@ public class Renderer{
 		// M V P transformace
 		Mat4 matMVP = model.mul(view).mul(projection);
 		//kazdy vrchol se projde a ztranformuje se
+	 color = vertexBuffer.get(0).getColor();
 		for(Vertex v : vertexBuffer)
 		{	
 		    Vertex newVertex = v.mul(matMVP);		
@@ -108,7 +112,7 @@ public class Renderer{
 		// TODO clip, vyhazuje co nam vycuhuje ven, podminky musime zkontrolovat hranice
 		
 		// dehomog
-		if (!a.getPosition().dehomog().isPresent()){
+		if (!a.getPosition().dehomog().isPresent()|| !b.getPosition().dehomog().isPresent()|| !c.getPosition().dehomog().isPresent()){
 			return;// neregulerni trojuhelnik(w=0), zahodime
 		
 		}
@@ -124,7 +128,6 @@ public class Renderer{
 		va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
 		vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
 		vc = new Vec3D(vc.getX()+1, -vc.getY()+1, 0);
-		// pricteme k x a y 1, bod [-1,-1] se zmeni na [0,0]
 
 		Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
 		Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
@@ -141,28 +144,46 @@ public class Renderer{
 		if (!a.getPosition().dehomog().isPresent() || !b.getPosition().dehomog().isPresent()){
 			return;
 		}
-		// 4D do 3D
-				Vec3D va = a.getPosition().dehomog().get();
-				Vec3D vb = b.getPosition().dehomog().get();
+					color = a.getColor();
 				
-		// viewPort
-				/*
-				va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
-				vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
-				*/
-				double vZ = 0;
-				double vX=((va.getX() + 1)*halfOfWidth);
-				double vX2= ((vb.getX() + 1)*halfOfWidth);
-				double vY = ((-va.getY() + 1)*halfOfHeigh);
-				double vY2= ((-vb.getY() + 1)*halfOfHeigh);
-				Vec3D v1 = new Vec3D(vX,vY,vZ);
-				Vec3D v2 = new Vec3D(vX2,vY2,vZ);
-				/*
-				Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
-				Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
-				*/
-				//System.out.println(vX+" "+vY);
-				lren.draw(v1, v2);
+		/*	
+		if(-a.getPosition().getW()<=a.getPosition().getX()&&a.getPosition().getY()<=a.getPosition().getW()&&0<=a.getPosition().getZ()&&a.getPosition().getZ()<=a.getPosition().getW())
+			{	
+				if(-b.getPosition().getW()<=b.getPosition().getX()&&b.getPosition().getY()<=b.getPosition().getW()&&0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
+				{
+					// 4D do 3D
+					Vec3D va = a.getPosition().dehomog().get();
+					Vec3D vb = b.getPosition().dehomog().get();
+					
+			// viewPort
+					
+					va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
+					vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
+			
+					Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
+					Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
+					
+					lren.draw(v1, v2,color);
+					
+				}
+				
+			}
+			
+		*/
+					
+			// 4D do 3D
+			Vec3D va = a.getPosition().dehomog().get();
+			Vec3D vb = b.getPosition().dehomog().get();
+			
+	// viewPort
+			
+			va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
+			vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
+	
+			Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
+			Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
+			
+			lren.draw(v1, v2,color);
 				
 	}
 	

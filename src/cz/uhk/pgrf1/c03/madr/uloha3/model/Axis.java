@@ -2,16 +2,17 @@ package cz.uhk.pgrf1.c03.madr.uloha3.model;
 
 
 
+import java.awt.Color;
 import java.util.ArrayList;
 
 public class Axis extends Solid {
 	
 	public Axis()
 	{
-		vertexBuffer.add(new Vertex(0,0,0,0Xff0000));
-		vertexBuffer.add(new Vertex(1,0,0,0Xff0000));
-		vertexBuffer.add(new Vertex(0,1,0,0Xff0000));
-		vertexBuffer.add(new Vertex(0,0,1,0Xff0000));
+		vertexBuffer.add(new Vertex(0,0,0,Color.RED));
+		vertexBuffer.add(new Vertex(5,0,0,Color.RED));
+		vertexBuffer.add(new Vertex(0,5,0,Color.RED));
+		vertexBuffer.add(new Vertex(0,0,5,Color.RED));
 		
 	
 		
