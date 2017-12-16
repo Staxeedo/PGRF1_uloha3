@@ -17,7 +17,7 @@ public class LineRasterizer extends Rasterizer {
 		int x2 = (int) b.getX();
 		int y1 = (int) a.getY();
 		int y2 = (int) b.getY();
-
+         
 		g.drawLine(x1, y1, x2, y2);
 
 	}

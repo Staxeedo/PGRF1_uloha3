@@ -60,17 +60,15 @@ public class Renderer{
 		List<Vertex> vertexBuffer = solid.getVertexBuffer();
 		// M V P transformace
 		Mat4 matMVP = model.mul(view).mul(projection);
-		//kazdy vrchol projde a ztranformuje se
-		for(Vertex v : solid.getVertexBuffer())
-		{	Vertex newVertex;
-		// vyhodnocuje se to zleva doprava	
-		newVertex = v.mul(matMVP);		
-			
+		//kazdy vrchol se projde a ztranformuje se
+		for(Vertex v : vertexBuffer)
+		{	
+		    Vertex newVertex = v.mul(matMVP);		
 			transVertexB.add(newVertex);
 		}
 		
 		
-		int i1,i2,i3;
+		int i1 = 0,i2 = 0,i3 = 0;
 		for(Part parts:solid.getParts())
 		{	
 			int startIndex = parts.getStartIndex();
@@ -88,7 +86,7 @@ public class Renderer{
 				i1 =solid.getIndexBuffer().get(startIndex);
 				i2=solid.getIndexBuffer().get(startIndex+1);
 				i3 = solid.getIndexBuffer().get(startIndex+2);
-				triangle(vertexBuffer.get(i1),vertexBuffer.get(i2),vertexBuffer.get(i3));
+				triangle(transVertexB.get(i1),transVertexB.get(i2),transVertexB.get(i3));
 				startIndex+=3;
 				break;
 			case LINES:
@@ -148,10 +146,22 @@ public class Renderer{
 				Vec3D vb = b.getPosition().dehomog().get();
 				
 		// viewPort
+				/*
 				va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
 				vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
+				*/
+				double vZ = 0;
+				double vX=((va.getX() + 1)*halfOfWidth);
+				double vX2= ((vb.getX() + 1)*halfOfWidth);
+				double vY = ((-va.getY() + 1)*halfOfHeigh);
+				double vY2= ((-vb.getY() + 1)*halfOfHeigh);
+				Vec3D v1 = new Vec3D(vX,vY,vZ);
+				Vec3D v2 = new Vec3D(vX2,vY2,vZ);
+				/*
 				Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
 				Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
+				*/
+				//System.out.println(vX+" "+vY);
 				lren.draw(v1, v2);
 				
 	}

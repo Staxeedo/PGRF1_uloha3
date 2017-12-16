@@ -17,6 +17,7 @@ import javax.swing.SwingUtilities;
 import javax.swing.WindowConstants;
 
 import cz.uhk.pgrf1.c03.madr.uloha3.model.Axis;
+import cz.uhk.pgrf1.c03.madr.uloha3.model.Cube;
 import cz.uhk.pgrf1.c03.madr.uloha3.model.TetraHedron;
 import cz.uhk.pgrf1.c03.madr.uloha3.raster.LineRasterizer;
 import cz.uhk.pgrf1.c03.madr.uloha3.raster.TriangleRasterizer;
@@ -36,7 +37,10 @@ public class Canvas {
 
 	private JPanel panel;
 	private BufferedImage img;
-	Camera cam = new Camera(new Vec3D(10, 0, 0), 0, 0, 1, true);
+	Camera cam = new Camera(new Vec3D(12,1.5, 1),  Math.toRadians(0),  Math.toRadians(0), 1, true);
+	Mat4PerspRH projectionMat  = new Mat4PerspRH(Math.PI/4,1,0.01,45);
+	Mat4Identity model = new Mat4Identity();
+	
 
 	public Canvas(int width, int height) {
 		JFrame frame = new JFrame();
@@ -69,29 +73,15 @@ public class Canvas {
 		
 		//--------------------------------------
 		
-		TetraHedron th = new TetraHedron();
-		LineRasterizer lren = new LineRasterizer(img);
-		TriangleRasterizer tren = new TriangleRasterizer(img);
+		
+	
 		//================================
 		
 		
 		
 		
 		panel.addKeyListener(new KeyAdapter() {
-			@Override
-			public void keyTyped(KeyEvent e) {
-			
 		
-		
-				
-			}
-			
-			@Override
-			public void keyReleased(KeyEvent e) {
-				// TODO Auto-generated method stub
-				
-			}
-			
 			@Override
 			public void keyPressed(KeyEvent e) {
 				System.out.println("press");
@@ -112,8 +102,9 @@ public class Canvas {
 					break;
 					
 				}
-				
+				renderTetraHedron();
 			}
+		
 		});
 		
 		
@@ -128,19 +119,12 @@ public class Canvas {
 
 			      clear();
 				
-				Renderer ren = new Renderer(tren,lren, img);
-				if (e.getButton() == MouseEvent.BUTTON1)
-					//img.setRGB(e.getX(), e.getY(), 0xffff00);
-					ren.setModel(new Mat4Identity());
-				//ren.setView(new Mat4ViewRH(new Vec3D(0,0,15), new Vec3D(0,0,-1), new Vec3D(0,1,0)));
-	
-			        ren.setView(cam.getViewMatrix());
-					ren.setProjection(new Mat4PerspRH(Math.PI/4,1,0.01,45));
 				
-				//	Axis ax = new Axis();
-				//	ren.render(ax);
-					
-				   ren.render(th);
+				if (e.getButton() == MouseEvent.BUTTON1)
+
+	
+			      
+					renderTetraHedron();
 					
 				panel.repaint();
 					
@@ -166,8 +150,38 @@ public class Canvas {
 	public void start() {
 		clear();
 		img.getGraphics().drawString("Use mouse buttons", 5, img.getHeight() - 5);
+		renderTetraHedron();
+		panel.repaint();
+		
+		
+	}
+	public void renderTetraHedron()
+	{	clear();
+		TetraHedron th = new TetraHedron();
+		LineRasterizer lren = new LineRasterizer(img);
+		TriangleRasterizer tren = new TriangleRasterizer(img);
+		Renderer ren = new Renderer(tren,lren, img);
+		ren.setModel(model);
+		ren.setProjection(projectionMat);
+		ren.setView(cam.getViewMatrix());
+		ren.render(cb);
 		panel.repaint();
 	}
+	public void renderCube()
+	{
+		clear();
+		Cube cb = new Cube();
+		LineRasterizer lren = new LineRasterizer(img);
+		TriangleRasterizer tren = new TriangleRasterizer(img);
+		Renderer ren = new Renderer(tren,lren, img);
+		ren.setModel(model);
+		ren.setProjection(projectionMat);
+		ren.setView(cam.getViewMatrix());
+		ren.render(cb);
+		panel.repaint();
+	}
+	
+	
 
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(() -> new Canvas(800, 600).start());
