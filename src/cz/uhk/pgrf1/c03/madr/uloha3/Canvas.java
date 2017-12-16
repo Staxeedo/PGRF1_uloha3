@@ -35,7 +35,7 @@ import transforms.Mat4ViewRH;
 import transforms.Vec3D;
 
 /**
- * trida pro kresleni na platno: zobrazeni pixelu, ovladani mysi
+ * Uzivatelske rozhrani
  * 
  * @author PGRF FIM UHK
  * @version 2017
