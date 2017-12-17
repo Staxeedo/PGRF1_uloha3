@@ -9,4 +9,3 @@ Doplòte program o zobrazení zadané parametrické køivky definované v kartézských,
 
 
 Doplòte pøedcházející program pro vykreslení hladkých køivek (Fergusonova, Bézierova a Coonsova kubika) pomocí zadaných ètyø pevných øídících bodù. Použijte definice kubik pomocí matic! Koncové body umístìte ve význaèných bodech zvoleného tìlesa, napøíklad v protilehlých vrcholech krychle. Ostatní body umístìte tak, aby bylo vidìt zakøivení køivky v prostoru.
-Bonus 4 body: rozšiøte poèet øídících bodù na šest. Pokuste se o hladké napojení navazujících køivek.

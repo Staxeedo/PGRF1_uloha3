@@ -146,10 +146,10 @@ public class Renderer{
 		}
 					color = a.getColor();
 				
-		/*	
-		if(-a.getPosition().getW()<=a.getPosition().getX()&&a.getPosition().getY()<=a.getPosition().getW()&&0<=a.getPosition().getZ()&&a.getPosition().getZ()<=a.getPosition().getW())
+		// Orezani
+		if(-a.getPosition().getW()<=a.getPosition().getX()||a.getPosition().getY()<=a.getPosition().getW()||0<=a.getPosition().getZ()||a.getPosition().getZ()<=a.getPosition().getW())
 			{	
-				if(-b.getPosition().getW()<=b.getPosition().getX()&&b.getPosition().getY()<=b.getPosition().getW()&&0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
+				if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
 				{
 					// 4D do 3D
 					Vec3D va = a.getPosition().dehomog().get();
@@ -168,9 +168,9 @@ public class Renderer{
 				}
 				
 			}
-			
-		*/
-					
+	
+	/*	
+
 			// 4D do 3D
 			Vec3D va = a.getPosition().dehomog().get();
 			Vec3D vb = b.getPosition().dehomog().get();
@@ -184,10 +184,10 @@ public class Renderer{
 			Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
 			
 			lren.draw(v1, v2,color);
-				
+		*/	
 	}
 	
-	
+
 	
 
 }
