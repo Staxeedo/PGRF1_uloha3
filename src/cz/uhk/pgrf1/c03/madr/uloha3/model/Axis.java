@@ -3,8 +3,14 @@ package cz.uhk.pgrf1.c03.madr.uloha3.model;
 
 
 import java.awt.Color;
-import java.util.ArrayList;
-
+/**
+ * Teleso Osy
+ * osa x = cervena
+ * osa y= zelena
+ * osa z = modra
+ * @author stand
+ *
+ */
 public class Axis extends Solid {
 	
 	public Axis()

@@ -12,7 +12,12 @@ import cz.uhk.pgrf1.c03.madr.uloha3.raster.LineRasterizer;
 import cz.uhk.pgrf1.c03.madr.uloha3.raster.TriangleRasterizer;
 import transforms.Mat4;
 import transforms.Vec3D;
-
+/**
+ * Trida pro vykreslovani Telesa
+ * Doimplementovan kod ze cviceni
+ * @author stand
+ *
+ */
 public class Renderer{
 
 	private List<Vertex> transVertexB = new ArrayList<>();
@@ -63,7 +68,7 @@ public class Renderer{
 		List<Vertex> vertexBuffer = solid.getVertexBuffer();
 		// M V P transformace
 		Mat4 matMVP = model.mul(view).mul(projection);
-		//kazdy vrchol se projde a ztranformuje se
+		//Projdou se veskere vrcholy a ztransformuji se
 	 color = vertexBuffer.get(0).getColor();
 		for(Vertex v : vertexBuffer)
 		{	
@@ -73,6 +78,7 @@ public class Renderer{
 		
 		
 		int i1 = 0,i2 = 0,i3 = 0;
+		
 		for(Part parts:solid.getParts())
 		{	
 			int startIndex = parts.getStartIndex();
@@ -85,8 +91,6 @@ public class Renderer{
 			switch(parts.getTopology())
 			{
 			case TRIANGLES:
-				// veme vrchol na indexu
-				// inkrementace starindexu o 3
 				i1 =solid.getIndexBuffer().get(startIndex);
 				i2=solid.getIndexBuffer().get(startIndex+1);
 				i3 = solid.getIndexBuffer().get(startIndex+2);
@@ -116,16 +120,18 @@ public class Renderer{
 		
 		}
 		
+	
+		color = a.getColor();
+		
 		// orezani
 		if(-a.getPosition().getW()<=a.getPosition().getX()||a.getPosition().getY()<=a.getPosition().getW()||0<=a.getPosition().getZ()||a.getPosition().getZ()<=a.getPosition().getW())
 		{	
-			if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
+			if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()||b.getPosition().getZ()<=b.getPosition().getW())
 			{
-				if(-c.getPosition().getW()<=c.getPosition().getX()||c.getPosition().getY()<=c.getPosition().getW()||0<=c.getPosition().getZ()&&c.getPosition().getZ()<=c.getPosition().getW())
+				if(-c.getPosition().getW()<=c.getPosition().getX()||c.getPosition().getY()<=c.getPosition().getW()||0<=c.getPosition().getZ()||c.getPosition().getZ()<=c.getPosition().getW())
 				{
 					// 4D do 3D
-					Vec3D va = a.getPosition().dehomog().get();// vraci optional
-					// splasknuti x,y a zahodime z
+					Vec3D va = a.getPosition().dehomog().get();
 					Vec3D vb = b.getPosition().dehomog().get();
 					Vec3D vc = c.getPosition().dehomog().get();
 
@@ -139,7 +145,7 @@ public class Renderer{
 					Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
 					Vec3D v3 = new Vec3D(vc.getX()*halfOfWidth,vc.getY()*halfOfHeigh,0);
 
-					tren.draw(v1, v2, v3);
+					tren.draw(v1, v2, v3,color);
 					
 				}
 			}
@@ -165,7 +171,7 @@ public class Renderer{
 		// Orezani
 		if(-a.getPosition().getW()<=a.getPosition().getX()||a.getPosition().getY()<=a.getPosition().getW()||0<=a.getPosition().getZ()||a.getPosition().getZ()<=a.getPosition().getW())
 			{	
-				if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
+				if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()||b.getPosition().getZ()<=b.getPosition().getW())
 				{
 					// 4D do 3D
 					Vec3D va = a.getPosition().dehomog().get();

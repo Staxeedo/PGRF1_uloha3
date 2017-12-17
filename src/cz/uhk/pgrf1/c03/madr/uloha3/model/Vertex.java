@@ -5,7 +5,12 @@ import java.awt.Color;
 
 import transforms.Mat4;
 import transforms.Point3D;
-
+/**
+ * Vrcholy
+ * 
+ * @author stand
+ *
+ */
 public class Vertex {
 
 	private Point3D position;
@@ -20,7 +25,6 @@ public class Vertex {
 		this.color = color;
 		
 	}
-	//imutable operace
 	public Vertex mul(Mat4 matrix)
 	{
 		

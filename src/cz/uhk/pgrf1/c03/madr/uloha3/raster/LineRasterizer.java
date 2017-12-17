@@ -5,7 +5,11 @@ import java.awt.Graphics;
 import java.awt.image.BufferedImage;
 
 import transforms.Vec3D;
-
+/**
+ * Trida pro vykresleni usecky
+ * @author stand
+ *
+ */
 public class LineRasterizer extends Rasterizer {
 	public LineRasterizer(BufferedImage img) {
 		super(img);

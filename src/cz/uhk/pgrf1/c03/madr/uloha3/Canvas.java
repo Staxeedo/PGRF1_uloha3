@@ -33,10 +33,19 @@ import transforms.Mat4PerspRH;
 import transforms.Mat4RotX;
 import transforms.Mat4RotY;
 import transforms.Mat4Scale;
+import transforms.Mat4Transl;
 import transforms.Vec3D;
 
 /**
- * trida pro kresleni na platno: zobrazeni pixelu, ovladani mysi
+ * trida pro kresleni na platno: zobrazeni pixelu, ovladani mysi 
+ * Ovladani kamery: AWSD, Mys(Kolecko - zoom, Leve tlacitko - rozhlizeni ) 
+ * Ovladaci panel: V prvni casti vybirame, co se ma zobrazovat a menime projekci 
+ * V druhe casti transformujeme objekt 
+ * 1.rotace podle osy X o Pi/6 
+ * 2.rotace podle osy X o -Pi/6 
+ * 3.rotace podle osy Y o Pi/6 
+ * 4.rotace podle osy Y p -Pi/6 
+ * 5. a 6. zmena meritka a posun
  * 
  * @author PGRF FIM UHK
  * @version 2017
@@ -45,21 +54,37 @@ public class Canvas {
 
 	private JPanel panel;
 	private BufferedImage img;
+
+	// jake teleso vykresluju
 	int mode = 0;
+
+	// nastaveni kamery
 	private Camera cam = new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
-	private double CAMERA_SPEED =0.5;
+	private double CAMERA_SPEED = 0.5;
+	private Point cameraPrevPoint;
+	private Point cameraPoint;
+
+	// projekce
 	private Mat4PerspRH projectionPerMat = new Mat4PerspRH(Math.PI / 4, 1, 0.01, 45);
 	private Mat4OrthoRH projectionOrRHmat = new Mat4OrthoRH(10, 10, 0.1, 230);
 	private Mat4 projectionMat = projectionPerMat;
-	private Mat4RotX rotateMatLeft = new Mat4RotX(Math.PI/6);
-	private Mat4RotX rotateMatRight = new Mat4RotX(-Math.PI/6);
-	private Mat4RotY rotateMatUP= new Mat4RotY(Math.PI/6);
-	private Mat4RotY rotateMatDown = new Mat4RotY(-Math.PI/6);
-	private Mat4Scale scale = new Mat4Scale(0.5,0.5,0.5);
+
+	// transformace
+	private Mat4RotX rotateMatLeft = new Mat4RotX(Math.PI / 6);
+	private Mat4RotX rotateMatRight = new Mat4RotX(-Math.PI / 6);
+	private Mat4RotY rotateMatUP = new Mat4RotY(Math.PI / 6);
+	private Mat4RotY rotateMatDown = new Mat4RotY(-Math.PI / 6);
+	private Mat4Scale scaleMat = new Mat4Scale(0.5);
+	private Mat4Scale rscaleMat = new Mat4Scale(1.5);
+	private Mat4Transl translMat = new Mat4Transl(2, 0.5, 1);
+	private Mat4Transl rTranslMat = new Mat4Transl(-2, -0.5, -1);
 	private Mat4 model = new Mat4Identity();
-	private Point cameraPrevPoint;
-	private Point cameraPoint;
+
+	// telesa
 	private Curve curve = new Curve();
+	TetraHedron th = new TetraHedron();
+	Cube cb = new Cube();
+	Axis x = new Axis();
 
 	public Canvas(int width, int height) {
 		JFrame frame = new JFrame();
@@ -81,36 +106,49 @@ public class Canvas {
 			}
 		};
 		panel.setPreferredSize(new Dimension(width, height));
+
 		// -----------------------------------------------------
+		// nastaveni ovladaciho panelu
 		JPanel pnl = new JPanel();
 		frame.add(pnl, BorderLayout.NORTH);
+
 		JLabel lbl = new JLabel("Draw: ");
 		JButton cubeButton = new JButton("Cube");
 		cubeButton.addActionListener(e -> setMode(0));
-		cubeButton.setSelected(true);
+
 		JButton tetraHedronButton = new JButton("Tetrahedron");
 		tetraHedronButton.addActionListener(e -> setMode(1));
+
 		JButton curveButton = new JButton("Curve");
 		curveButton.addActionListener(e -> setMode(2));
-		
-		
+
 		JLabel lbl1 = new JLabel("||");
+
 		JButton projectionButton = new JButton("Projection");
 		projectionButton.addActionListener(e -> setMode(3));
 
 		JLabel lbl2 = new JLabel("Trans: ");
-		JButton rotateLeftButton = new JButton("\u2190");
+
+		JButton rotateLeftButton = new JButton("\u21B6");
+
 		rotateLeftButton.addActionListener(e -> setMode(4));
-		JButton rotateRightButton = new JButton("\u2192");
+		JButton rotateRightButton = new JButton("\u21B7");
 		rotateRightButton.addActionListener(e -> setMode(5));
+
 		JButton rotateUpButton = new JButton("\u2191");
 		rotateUpButton.addActionListener(e -> setMode(6));
+
 		JButton rotateDownButton = new JButton("\u2193");
 		rotateDownButton.addActionListener(e -> setMode(7));
-		JButton transformButton = new JButton("Transform");
+
+		JButton transformButton = new JButton("\u21A1");
 		transformButton.addActionListener(e -> setMode(8));
+
+		JButton transformBackButton = new JButton("\u219F");
+		transformBackButton.addActionListener(e -> setMode(9));
+
 		JButton resetButton = new JButton("R");
-		resetButton.addActionListener(e -> setMode(9));
+		resetButton.addActionListener(e -> setMode(10));
 
 		pnl.add(lbl);
 		pnl.add(cubeButton);
@@ -124,8 +162,9 @@ public class Canvas {
 		pnl.add(rotateUpButton);
 		pnl.add(rotateDownButton);
 		pnl.add(transformButton);
+		pnl.add(transformBackButton);
 		pnl.add(resetButton);
-		
+		// -----------------------------------------------------
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
@@ -134,6 +173,8 @@ public class Canvas {
 		panel.requestFocus();
 		panel.requestFocusInWindow();
 
+		// -----------------------------------------------------
+		// ovladani kamery pomoci klaves
 		panel.addKeyListener(new KeyAdapter() {
 
 			@Override
@@ -161,6 +202,8 @@ public class Canvas {
 
 		});
 
+		// -----------------------------------------------------
+		// ovladani kamery pomoci mysi
 		panel.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mousePressed(MouseEvent e) {
@@ -180,8 +223,8 @@ public class Canvas {
 				double dy = (cameraPoint.getX() - cameraPrevPoint.getX());
 
 				cameraPrevPoint = new Point(cameraPoint);
-				cam = cam.addAzimuth(Math.PI / img.getWidth() * dx);
-				cam = cam.addZenith(Math.PI / img.getHeight() * dy);
+				cam = cam.addAzimuth((Math.PI / 360) * dx);
+				cam = cam.addZenith((Math.PI / 360) * dy);
 				render();
 
 			}
@@ -190,6 +233,7 @@ public class Canvas {
 
 		panel.addMouseWheelListener(new MouseAdapter() {
 			public void mouseWheelMoved(java.awt.event.MouseWheelEvent e) {
+				//
 				if (e.getPreciseWheelRotation() > 0) {
 					cam = cam.backward(CAMERA_SPEED);
 				} else {
@@ -218,6 +262,7 @@ public class Canvas {
 
 	}
 
+	// funkce pro nastaveni toho, co se ma vykreslovat
 	private void setMode(int number) {
 
 		switch (number) {
@@ -234,7 +279,9 @@ public class Canvas {
 			render();
 			break;
 		case 3:
+
 			if (projectionMat == projectionPerMat) {
+				// prohozeni ukazatele
 				projectionMat = projectionOrRHmat;
 
 			} else {
@@ -242,44 +289,45 @@ public class Canvas {
 			}
 			render();
 			break;
-			
+
 		case 4:
-		  model = model.mul(rotateMatRight);
-		  render();
-			
-		break;
+			model = model.mul(rotateMatRight);
+			render();
+
+			break;
 		case 5:
-			  model = model.mul(rotateMatLeft);
-			  render();
-				
+			model = model.mul(rotateMatLeft);
+			render();
+
 			break;
 		case 6:
-			  model = model.mul(rotateMatUP);
-			  render();
+			model = model.mul(rotateMatUP);
+			render();
 			break;
 		case 7:
 			model = model.mul(rotateMatDown);
-			  render();
+			render();
 			break;
 		case 8:
-			
-			model = model.mul(scale);
+
+			model = model.mul(scaleMat).mul(translMat);
 			render();
 			break;
-			
-			
 		case 9:
-			//reset
-			model = new Mat4Identity();
-			cam= new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
-			projectionMat=projectionPerMat;
+			model = model.mul(rscaleMat).mul(rTranslMat);
 			render();
-			
+			break;
+
+		case 10:
+			// reset Kamery, Projekce, Modelu
+			model = new Mat4Identity();
+			cam = new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
+			projectionMat = projectionPerMat;
+			render();
+
 			break;
 		}
-	
-			
-			
+
 		// aby znovu fungoval KeyAdapter
 		panel.requestFocus();
 		panel.requestFocusInWindow();
@@ -310,7 +358,6 @@ public class Canvas {
 
 	public void renderTetraHedron() {
 
-		TetraHedron th = new TetraHedron();
 		LineRasterizer lren = new LineRasterizer(img);
 		TriangleRasterizer tren = new TriangleRasterizer(img);
 		Renderer ren = new Renderer(tren, lren, img);
@@ -322,7 +369,6 @@ public class Canvas {
 
 	public void renderCube() {
 
-		Cube cb = new Cube();
 		LineRasterizer lren = new LineRasterizer(img);
 		TriangleRasterizer tren = new TriangleRasterizer(img);
 		Renderer ren = new Renderer(tren, lren, img);
@@ -334,7 +380,6 @@ public class Canvas {
 	}
 
 	public void renderAxis() {
-		Axis x = new Axis();
 		LineRasterizer lren = new LineRasterizer(img);
 		TriangleRasterizer tren = new TriangleRasterizer(img);
 		Renderer ren = new Renderer(tren, lren, img);

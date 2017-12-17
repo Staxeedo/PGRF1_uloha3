@@ -2,7 +2,13 @@ package cz.uhk.pgrf1.c03.madr.uloha3.model;
 
 import java.util.ArrayList;
 import java.util.List;
-
+/**
+ * Abstraktni trida pro teleso
+ * Kod ze cviceni
+ * 
+ * @author stand
+ *
+ */
 public abstract class Solid {
 
 	public enum Topology {
@@ -10,7 +16,6 @@ public abstract class Solid {
 	};
 
 	protected final List<Vertex> vertexBuffer = new ArrayList<>();
-	// jak se ma pospojovat
 	protected final List<Integer> indexBuffer = new ArrayList<>();
 	protected final List<Part> parts = new ArrayList<>();
 
