@@ -11,8 +11,8 @@ public class Axis extends Solid {
 	{
 		vertexBuffer.add(new Vertex(0,0,0,Color.RED));
 		vertexBuffer.add(new Vertex(5,0,0,Color.RED));
-		vertexBuffer.add(new Vertex(0,5,0,Color.RED));
-		vertexBuffer.add(new Vertex(0,0,5,Color.RED));
+		vertexBuffer.add(new Vertex(0,5,0,Color.GREEN));
+		vertexBuffer.add(new Vertex(0,0,5,Color.BLUE));
 		
 	
 		

@@ -109,31 +109,42 @@ public class Renderer{
 	}
 
 	private void triangle(Vertex a, Vertex b, Vertex c) {
-		// TODO clip, vyhazuje co nam vycuhuje ven, podminky musime zkontrolovat hranice
-		
+			
 		// dehomog
 		if (!a.getPosition().dehomog().isPresent()|| !b.getPosition().dehomog().isPresent()|| !c.getPosition().dehomog().isPresent()){
 			return;// neregulerni trojuhelnik(w=0), zahodime
 		
 		}
-		// 4D do 3D
-		Vec3D va = a.getPosition().dehomog().get();// vraci optional
-		// splasknuti x,y a zahodime z
-		Vec3D vb = b.getPosition().dehomog().get();
-		Vec3D vc = c.getPosition().dehomog().get();
+		
+		// orezani
+		if(-a.getPosition().getW()<=a.getPosition().getX()||a.getPosition().getY()<=a.getPosition().getW()||0<=a.getPosition().getZ()||a.getPosition().getZ()<=a.getPosition().getW())
+		{	
+			if(-b.getPosition().getW()<=b.getPosition().getX()||b.getPosition().getY()<=b.getPosition().getW()||0<=b.getPosition().getZ()&&b.getPosition().getZ()<=b.getPosition().getW())
+			{
+				if(-c.getPosition().getW()<=c.getPosition().getX()||c.getPosition().getY()<=c.getPosition().getW()||0<=c.getPosition().getZ()&&c.getPosition().getZ()<=c.getPosition().getW())
+				{
+					// 4D do 3D
+					Vec3D va = a.getPosition().dehomog().get();// vraci optional
+					// splasknuti x,y a zahodime z
+					Vec3D vb = b.getPosition().dehomog().get();
+					Vec3D vc = c.getPosition().dehomog().get();
 
-		// dalsi krok viewPort (transformace do okna )
+					//viewPort
 
-		// otoceni y (y je -y)
-		va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
-		vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
-		vc = new Vec3D(vc.getX()+1, -vc.getY()+1, 0);
+					va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
+					vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
+					vc = new Vec3D(vc.getX()+1, -vc.getY()+1, 0);
 
-		Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
-		Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
-		Vec3D v3 = new Vec3D(vc.getX()*halfOfWidth,vc.getY()*halfOfHeigh,0);
+					Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
+					Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
+					Vec3D v3 = new Vec3D(vc.getX()*halfOfWidth,vc.getY()*halfOfHeigh,0);
 
-		tren.draw(v1, v2, v3);
+					tren.draw(v1, v2, v3);
+					
+				}
+			}
+		}
+
 
 	}
 
@@ -144,7 +155,12 @@ public class Renderer{
 		if (!a.getPosition().dehomog().isPresent() || !b.getPosition().dehomog().isPresent()){
 			return;
 		}
-					color = a.getColor();
+						if(a.getColor()!=b.getColor())
+						{
+							color=b.getColor();
+						}
+						else {
+						color = a.getColor();}
 				
 		// Orezani
 		if(-a.getPosition().getW()<=a.getPosition().getX()||a.getPosition().getY()<=a.getPosition().getW()||0<=a.getPosition().getZ()||a.getPosition().getZ()<=a.getPosition().getW())
@@ -169,22 +185,6 @@ public class Renderer{
 				
 			}
 	
-	/*	
-
-			// 4D do 3D
-			Vec3D va = a.getPosition().dehomog().get();
-			Vec3D vb = b.getPosition().dehomog().get();
-			
-	// viewPort
-			
-			va = new Vec3D(va.getX()+1, -va.getY()+1, 0);// vynasobit vektorem (1,-1,0)
-			vb = new Vec3D(vb.getX()+1, -vb.getY()+1, 0);
-	
-			Vec3D v1 = new Vec3D(va.getX()*halfOfWidth,va.getY()*halfOfHeigh,0);
-			Vec3D v2 = new Vec3D(vb.getX()*halfOfWidth,vb.getY()*halfOfHeigh,0);
-			
-			lren.draw(v1, v2,color);
-		*/	
 	}
 	
 

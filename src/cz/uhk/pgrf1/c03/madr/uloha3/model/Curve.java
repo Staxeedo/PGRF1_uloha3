@@ -10,10 +10,10 @@ public class Curve extends Solid{
 	public Curve() {
 		
 		// ridici body
-		Point3D r1 = new Point3D(1,1,0);
-		Point3D r2 = new Point3D(2,-1,2); 
-		Point3D r3 = new Point3D(3,2,1);
-		Point3D r4 = new Point3D(5,3,2);
+		Point3D r1 = new Point3D(3,1,1);
+		Point3D r2 = new Point3D(1.5,2,2); 
+		Point3D r3 = new Point3D(1,1,3);
+		Point3D r4 = new Point3D(1,3,3);
 		
 		Cubic cub = new Cubic(Cubic.BEZIER, r1,r2,r3,r4);
 		double param = 0.1;
@@ -21,7 +21,7 @@ public class Curve extends Solid{
 		{
 			
 			Point3D res = cub.compute(i);
-			vertexBuffer.add(new Vertex(res,Color.green));
+			vertexBuffer.add(new Vertex(res,Color.ORANGE));
 		}		
 		
 		indexBuffer.add(0);

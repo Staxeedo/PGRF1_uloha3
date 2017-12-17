@@ -31,8 +31,8 @@ import transforms.Mat4Identity;
 import transforms.Mat4OrthoRH;
 import transforms.Mat4PerspRH;
 import transforms.Mat4RotX;
-import transforms.Mat4RotXYZ;
 import transforms.Mat4RotY;
+import transforms.Mat4Scale;
 import transforms.Vec3D;
 
 /**
@@ -46,18 +46,20 @@ public class Canvas {
 	private JPanel panel;
 	private BufferedImage img;
 	int mode = 0;
-	Camera cam = new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
-	Mat4PerspRH projectionPerMat = new Mat4PerspRH(Math.PI / 4, 1, 0.01, 45);
-	Mat4OrthoRH projectionRHmat = new Mat4OrthoRH(10, 10, 0.1, 230);
-	Mat4 projectionMat = projectionPerMat;
-	Mat4RotX rotateMatLeft = new Mat4RotX(Math.PI/6);
-	Mat4RotX rotateMatRight = new Mat4RotX(-Math.PI/6);
-	Mat4RotY rotateMatUP= new Mat4RotY(Math.PI/6);
-	Mat4RotY rotateMatDown = new Mat4RotY(-Math.PI/6);
-	Mat4 model = new Mat4Identity();
-	Point cameraPrevPoint;
-	Point cameraPoint;
-	Curve curve = new Curve();
+	private Camera cam = new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
+	private double CAMERA_SPEED =0.5;
+	private Mat4PerspRH projectionPerMat = new Mat4PerspRH(Math.PI / 4, 1, 0.01, 45);
+	private Mat4OrthoRH projectionOrRHmat = new Mat4OrthoRH(10, 10, 0.1, 230);
+	private Mat4 projectionMat = projectionPerMat;
+	private Mat4RotX rotateMatLeft = new Mat4RotX(Math.PI/6);
+	private Mat4RotX rotateMatRight = new Mat4RotX(-Math.PI/6);
+	private Mat4RotY rotateMatUP= new Mat4RotY(Math.PI/6);
+	private Mat4RotY rotateMatDown = new Mat4RotY(-Math.PI/6);
+	private Mat4Scale scale = new Mat4Scale(0.5,0.5,0.5);
+	private Mat4 model = new Mat4Identity();
+	private Point cameraPrevPoint;
+	private Point cameraPoint;
+	private Curve curve = new Curve();
 
 	public Canvas(int width, int height) {
 		JFrame frame = new JFrame();
@@ -107,11 +109,13 @@ public class Canvas {
 		rotateDownButton.addActionListener(e -> setMode(7));
 		JButton transformButton = new JButton("Transform");
 		transformButton.addActionListener(e -> setMode(8));
+		JButton resetButton = new JButton("R");
+		resetButton.addActionListener(e -> setMode(9));
 
 		pnl.add(lbl);
 		pnl.add(cubeButton);
-		pnl.add(curveButton);
 		pnl.add(tetraHedronButton);
+		pnl.add(curveButton);
 		pnl.add(lbl1);
 		pnl.add(projectionButton);
 		pnl.add(lbl2);
@@ -120,16 +124,12 @@ public class Canvas {
 		pnl.add(rotateUpButton);
 		pnl.add(rotateDownButton);
 		pnl.add(transformButton);
+		pnl.add(resetButton);
 		
 		frame.add(panel);
 		frame.pack();
 		frame.setVisible(true);
 		frame.add(panel);
-
-		// --------------------------------------------------------
-		// --------------------------------------------------------
-
-		// --------------------------------------------------------
 
 		panel.requestFocus();
 		panel.requestFocusInWindow();
@@ -140,18 +140,18 @@ public class Canvas {
 			public void keyPressed(KeyEvent e) {
 				switch (e.getKeyCode()) {
 				case KeyEvent.VK_W:
-					cam = cam.up(0.5);
+					cam = cam.up(CAMERA_SPEED);
 					break;
 
 				case KeyEvent.VK_S:
-					cam = cam.down(0.5);
+					cam = cam.down(CAMERA_SPEED);
 					break;
 				case KeyEvent.VK_D:
-					cam = cam.right(0.5);
+					cam = cam.right(CAMERA_SPEED);
 					break;
 
 				case KeyEvent.VK_A:
-					cam = cam.left(0.5);
+					cam = cam.left(CAMERA_SPEED);
 					break;
 
 				}
@@ -167,8 +167,6 @@ public class Canvas {
 
 				if (e.getButton() == MouseEvent.BUTTON1)
 					cameraPrevPoint = new Point((double) e.getX(), (double) e.getY());
-
-				// render();
 				panel.repaint();
 			}
 
@@ -193,9 +191,9 @@ public class Canvas {
 		panel.addMouseWheelListener(new MouseAdapter() {
 			public void mouseWheelMoved(java.awt.event.MouseWheelEvent e) {
 				if (e.getPreciseWheelRotation() > 0) {
-					cam = cam.backward(0.1);
+					cam = cam.backward(CAMERA_SPEED);
 				} else {
-					cam = cam.forward(0.1);
+					cam = cam.forward(CAMERA_SPEED);
 				}
 				render();
 			};
@@ -215,7 +213,6 @@ public class Canvas {
 
 	public void start() {
 		clear();
-		img.getGraphics().drawString("Use mouse buttons", 5, img.getHeight() - 5);
 		render();
 		panel.repaint();
 
@@ -238,7 +235,7 @@ public class Canvas {
 			break;
 		case 3:
 			if (projectionMat == projectionPerMat) {
-				projectionMat = projectionRHmat;
+				projectionMat = projectionOrRHmat;
 
 			} else {
 				projectionMat = projectionPerMat;
@@ -257,7 +254,6 @@ public class Canvas {
 				
 			break;
 		case 6:
-			System.out.println("tutok");
 			  model = model.mul(rotateMatUP);
 			  render();
 			break;
@@ -266,6 +262,19 @@ public class Canvas {
 			  render();
 			break;
 		case 8:
+			
+			model = model.mul(scale);
+			render();
+			break;
+			
+			
+		case 9:
+			//reset
+			model = new Mat4Identity();
+			cam= new Camera(new Vec3D(-12, 1.5, 1), Math.toRadians(1.1), Math.toRadians(0), 1, true);
+			projectionMat=projectionPerMat;
+			render();
+			
 			break;
 		}
 	
@@ -291,6 +300,7 @@ public class Canvas {
 			break;
 		case 2:
 			renderAxis();
+			renderCube();
 			renderCurve();
 			break;
 		}
